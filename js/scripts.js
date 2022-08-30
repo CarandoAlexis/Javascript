@@ -4,7 +4,14 @@ let nota2 = 0;
 let nota3 = 0;
 let nota4 = 0;
 let nota5 = 0;
-let numeronotas = Number(prompt("Ingrese un numero de notas a promediar no mayor a 5"))
+let numeronotas = Number(prompt("Ingrese un numero de notas a promediar no mayor a 5"));
+
+function nombrealumno(){
+  let nombre = prompt("Ingrese nombre");
+  let apellido = prompt("Ingrese apellido");
+  return nombre+" "+apellido;
+}
+
 function promedio(numeronotas){
 
   if (numeronotas <= 1){
@@ -39,10 +46,9 @@ function promedio(numeronotas){
 
 for (let i = 0; i < alumnos; i++) {
   
-  console.log("Alumno"+" "+ `${i+1}` +" "+promedio(numeronotas));
+  console.log(nombrealumno()+" Promedio: "+promedio(numeronotas));
 
 }
-
 
 
 
