@@ -40,7 +40,7 @@ function promedio(numeronotas){
   }
 }
 
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < alumnos.length; i++) {
   if (numeronotas <= 1) {
     console.log(promedio(numeronotas))
     break;
