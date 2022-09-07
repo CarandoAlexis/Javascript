@@ -1,4 +1,7 @@
-let alumnos = ["Juan", "Adrian", "Ana" , "Martin"];
+let mujeres = ["Ana" , "Iara"];
+let hombres = ["Juan", "Adrian" , "Martin"];
+let alumnos = mujeres.concat(hombres);
+alumnos.sort();
 let nota1 = 0;
 let nota2 = 0;
 let nota3 = 0;
@@ -36,7 +39,8 @@ function promedio(numeronotas){
   
   }
 }
-for (let i = 0; i < 4; i++) {
+
+for (let i = 0; i < 5; i++) {
   if (numeronotas <= 1) {
     console.log(promedio(numeronotas))
     break;
