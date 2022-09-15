@@ -1,54 +1,101 @@
-let mujeres = ["Ana" , "Iara"];
-let hombres = ["Juan", "Adrian" , "Martin"];
-let alumnos = mujeres.concat(hombres);
-alumnos.sort();
-let nota1 = 0;
-let nota2 = 0;
-let nota3 = 0;
-let nota4 = 0;
-let nota5 = 0;
-let numeronotas = Number(prompt("Ingrese un numero de notas a promediar no mayor a 5"));
-function promedio(numeronotas){
+document.querySelector("#agregar").addEventListener("click",function(e){
+e.preventDefault();
 
-  if (numeronotas <= 1){
-    return "La cantidad de notas debe ser mayor a 1";
-  }else if (numeronotas >= 6){
-    return "La cantidad de notas debe ser menor a 6";
-  }else if(numeronotas == 2){
-    let nota1 = Number(prompt("ingrese nota 1"))
-    let nota2 = Number(prompt("ingrese nota 2"))
-        return (nota1 + nota2)/numeronotas;
-  }else if(numeronotas == 3){
-    let nota1 = Number(prompt("ingrese nota 1"))
-    let nota2 = Number(prompt("ingrese nota 2"))
-    let nota3 = Number(prompt("ingrese nota 3"))
-        return (nota1 + nota2 +nota3)/numeronotas;
-  }else if(numeronotas == 4){
-    let nota1 = Number(prompt("ingrese nota 1"))
-    let nota2 = Number(prompt("ingrese nota 2"))
-    let nota3 = Number(prompt("ingrese nota 3"))
-    let nota4 = Number(prompt("ingrese nota 4"))
-        return (nota1 + nota2 + nota3 + nota4)/numeronotas;
-  }else (numeronotas == 5);{
-    let nota1 = Number(prompt("ingrese nota 1"))
-    let nota2 = Number(prompt("ingrese nota 2"))
-    let nota3 = Number(prompt("ingrese nota 3"))
-    let nota4 = Number(prompt("ingrese nota 4"))
-    let nota5 = Number(prompt("ingrese nota 5"))
-        return (nota1 + nota2 + nota3 + nota4 + nota5)/numeronotas;
+let nombre=document.querySelector("#nombre");
+let nota=document.querySelector("#nota");
+
+/*lo siguiente es para crear el tr td y el boton para eliminar alumnos en la tabla*/ 
+
+/*tabla de nombre*/
+
+let tr=document.createElement("tr");
+let tdNombre=document.createElement("td");
+let txt=document.createTextNode(nombre.value);
+tdNombre.appendChild(txt);
+tdNombre.className="nombre";
+
+/*tabla de nota */
+
+let tdNota=document.createElement("td");
+txt=document.createTextNode(nota.value);
+tdNota.appendChild(txt);
+tdNota.className="right";
+
+/*para agregar el boton de eliminar alumno de la lista*/
+let tdRemove=document.createElement("td");
+let buttonRemove=document.createElement("input")
+buttonRemove.type="button";
+buttonRemove.value="Eliminar";
+buttonRemove.onclick=function(){
+this.parentElement.parentElement.remove();
+calculos();
+};
+tdRemove.appendChild(buttonRemove);
+tr.appendChild(tdNombre);
+tr.appendChild(tdNota);
+tr.appendChild(tdRemove);
+
+let tbody=document.getElementById("listado").querySelector("tbody").appendChild(tr);
+document.getElementById("listado").classList.remove("hide");
+document.getElementById("calculos").classList.remove("hide");
+nota.value="";
+nombre.value="";
+nombre.focus();
+calculos();
+});
+
+/*funcion para los calculos usando contenido de la tabla*/
+function calculos(){
+  /*Array con alumnos de tabla*/
+    let alumnosAgregados=document.getElementById("listado").querySelector("tbody").querySelectorAll("tr");
   
+  /*array de todos los alumnos aprobados, reprobados, mejor nota y peor nota*/
+    let aprobados=[];
+    let reprobados=[];
+   
+    let mejorNota=0;
+  
+    let peorNotaAlumnos=[];
+    let peorNota=10;
+  
+    let mediaNota=0;
+  
+  /*bucle por cada uno de los alumnos*/
+    for (let i=0;i<alumnosAgregados.length;i++){
+  
+      let tds=alumnosAgregados[i].getElementsByTagName('td');
+  
+  /*calculo mejor nota*/
+  
+      if(tds[1].innerHTML>mejorNota){
+        mejorNotaAlumno=[tds[0].innerHTML];
+        mejorNota=tds[1].innerHTML;
+      }else if(tds[1].innerHTML==mejorNota){
+        mejorNotaAlumno.push(tds[0].innerHTML);
+      }
+  
+  /*peor nota*/
+      if(tds[1].innerHTML<peorNota) {
+        peorNotaAlumnos=[tds[0].innerHTML];
+        peorNota=tds[1].innerHTML;
+      }else if(tds[1].innerHTML==peorNota){
+        peorNotaAlumnos.push(tds[0].innerHTML);
+      }
+  
+  /*aprobados y reprobados*/
+      if(tds[1].innerHTML>=4) {
+        aprobados.push(tds[0].innerHTML);
+      }else{
+        reprobados.push(tds[0].innerHTML);
+      }
   }
-}
-
-for (let i = 0; i < alumnos.length; i++) {
-  if (numeronotas <= 1) {
-    console.log(promedio(numeronotas))
-    break;
-  } else if(numeronotas >= 6){
-    console.log(promedio(numeronotas))
-    break;
-  } else{
-    alert("Ingrese las notas de "+alumnos[i])
-    console.log(alumnos[i]+" Promedio: "+promedio(numeronotas));
-  }
-}
+  
+  /*resultados*/
+  let result="<div>La mejor nota es de: <span> "+mejorNotaAlumno+" ("+mejorNota+")</span></div>";
+  result+="<div>La peor nota es de: <span> "+peorNotaAlumnos+" ("+peorNota+")</span></div>";
+  result+="<div>Los aprobados son: <span> "+aprobados+"</span></div>";
+  result+="<div>Los reprobados son: <span> "+reprobados+"</span></div>";
+  result+="<div>El promedio de aprobados es: <span> "+(aprobados.length*100/alumnosAgregados.length)+"%</span></div>";
+  document.getElementById("calculos").innerHTML=result;
+  
+}  

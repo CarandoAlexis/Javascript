@@ -8,8 +8,31 @@
 </head>
 <body>
     
-    <h1>Hola js</h1>
+    <form class="formulario">
+        <div>
+            <label>Nombre del alumno</label><input type="text" name="nombre" id="nombre">
+        </div>
+        <div>
+            <label>Nota del alumno (0-10)</label><input type="number" name="nota" id="nota">
+        </div>
+        <div>
+            <br><input type="submit" value="Agregar" class="agregar" id="agregar">
+        </div>
+    </form>
+     
+    <table id="listado" class='hide'>
+        <thead>
+            <th>Alumno</th>
+            <th>Nota</th>
+        </thead>
         
-    <script src="js/scripts.js"></script>   
+        <tbody>
+        </tbody>
+    </table>
+     
+    <div id="calculos" class='hide'></div>
+   
+        
+    <script src="js/scripts.js"></script>
 </body>
 </html>
