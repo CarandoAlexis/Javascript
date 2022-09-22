@@ -1,101 +1,98 @@
-document.querySelector("#agregar").addEventListener("click",function(e){
-e.preventDefault();
+let objetos = [
+    {precio : 100, id : 1, producto: "Cortante y Marcador Lechuza"},
+    {precio: 800, id: 2, producto: "Muñeco de Sonic"},
+    {precio: 100, id: 3, producto: "Cortante de flores"},
+    {precio: 50, id: 4, producto: "Marcador de Arbol"},
+]
+const contenedorCarr = document.getElementById('carrito-contenedor')
+const vaciarcarr = document.getElementById('vaciarCarrito')
+const totalapagar = document.getElementById('total')
 
-let nombre=document.querySelector("#nombre");
-let nota=document.querySelector("#nota");
+/*array vacio del carrito de compras */
+let carrito = []
 
-/*lo siguiente es para crear el tr td y el boton para eliminar alumnos en la tabla*/ 
+/*funcion para imprimir las cartas de productos en el html */
+const contenedorObj = document.getElementById('tarjetas')
+objetos.forEach((producto) => {
+  const div = document.createElement('div');
+  div.classList.add('card')
+  div.innerHTML=`
+    <div class="card-body">
+        <h5>${producto.producto}</h5>
+        <p>${producto.precio}</p>
+        <button class="btn btn-dark" id="añadir${producto.id}">Comprar</button>
+    </div>
+    `
 
-/*tabla de nombre*/
+  contenedorObj.appendChild(div);
+ 
+  /*para registrar el boton de añadir objeto al carrito */
+  const boton = document.getElementById(`añadir${producto.id}`)
+  boton.addEventListener('click', () => {
+    añadirProducto(producto.id)
+    
+  })
 
-let tr=document.createElement("tr");
-let tdNombre=document.createElement("td");
-let txt=document.createTextNode(nombre.value);
-tdNombre.appendChild(txt);
-tdNombre.className="nombre";
+})
 
-/*tabla de nota */
+/* funcion que agrega el objeto al carrito*/
+const añadirProducto = (prodId) => {
+  const item = objetos.find((prod) => prod.id === prodId)
+  carrito.push(item)
+  /*llamo la funcion asi puedo ver los objetos en carritos*/
+  verCarrito()
+  cargarstorage(carrito)
+  
+}
 
-let tdNota=document.createElement("td");
-txt=document.createTextNode(nota.value);
-tdNota.appendChild(txt);
-tdNota.className="right";
+/*funcion para visualizar cambios hechos en el carrito*/
+const verCarrito = () => {
+  
+  contenedorCarr.innerHTML = "" //con esto hago que se borre todo el contenido y se cargue el nuevo sino se me empezaban a repetir los items
+  carrito.forEach((producto) =>{
+    const div = document.createElement('div')
+    div.className = ('productoCarr')
+    div.innerHTML=`
+    <p>${producto.producto}</p>
+    <p>${producto.precio}</p>
+    <button onClick="elimcar(${producto.id})" class="eliminarit btn-dark">Eliminar</button>
+    `
+    contenedorCarr.appendChild(div);
+    
 
-/*para agregar el boton de eliminar alumno de la lista*/
-let tdRemove=document.createElement("td");
-let buttonRemove=document.createElement("input")
-buttonRemove.type="button";
-buttonRemove.value="Eliminar";
-buttonRemove.onclick=function(){
-this.parentElement.parentElement.remove();
-calculos();
-};
-tdRemove.appendChild(buttonRemove);
-tr.appendChild(tdNombre);
-tr.appendChild(tdNota);
-tr.appendChild(tdRemove);
+    
+       
+  })
+  
+  /*sumo el total de la compra de cada objeto*/
+  totalapagar.innerText = carrito.reduce((acc, producto) => acc + producto.precio,0)
+}
 
-let tbody=document.getElementById("listado").querySelector("tbody").appendChild(tr);
-document.getElementById("listado").classList.remove("hide");
-document.getElementById("calculos").classList.remove("hide");
-nota.value="";
-nombre.value="";
-nombre.focus();
-calculos();
-});
 
-/*funcion para los calculos usando contenido de la tabla*/
-function calculos(){
-  /*Array con alumnos de tabla*/
-    let alumnosAgregados=document.getElementById("listado").querySelector("tbody").querySelectorAll("tr");
+/*almacenando objetos en el local storage*/
+const cargarstorage = (carrito) =>{
+  localStorage.setItem('carrito',JSON.stringify(carrito))
+}
+if (localStorage.getItem('carrito')){
+  carrito = JSON.parse(localStorage.getItem('carrito'));
+  verCarrito()
+}
+
+/*funcion para eliminar objetos del carrito */
+
+const elimcar = (prodId) =>{
+  const item = carrito.find((prod)=>prod.id===prodId)
+  const indice = carrito.indexOf(item)
+  carrito.splice(indice, 1)
+  verCarrito()
+  cargarstorage(carrito)
   
-  /*array de todos los alumnos aprobados, reprobados, mejor nota y peor nota*/
-    let aprobados=[];
-    let reprobados=[];
-   
-    let mejorNota=0;
-  
-    let peorNotaAlumnos=[];
-    let peorNota=10;
-  
-    let mediaNota=0;
-  
-  /*bucle por cada uno de los alumnos*/
-    for (let i=0;i<alumnosAgregados.length;i++){
-  
-      let tds=alumnosAgregados[i].getElementsByTagName('td');
-  
-  /*calculo mejor nota*/
-  
-      if(tds[1].innerHTML>mejorNota){
-        mejorNotaAlumno=[tds[0].innerHTML];
-        mejorNota=tds[1].innerHTML;
-      }else if(tds[1].innerHTML==mejorNota){
-        mejorNotaAlumno.push(tds[0].innerHTML);
-      }
-  
-  /*peor nota*/
-      if(tds[1].innerHTML<peorNota) {
-        peorNotaAlumnos=[tds[0].innerHTML];
-        peorNota=tds[1].innerHTML;
-      }else if(tds[1].innerHTML==peorNota){
-        peorNotaAlumnos.push(tds[0].innerHTML);
-      }
-  
-  /*aprobados y reprobados*/
-      if(tds[1].innerHTML>=4) {
-        aprobados.push(tds[0].innerHTML);
-      }else{
-        reprobados.push(tds[0].innerHTML);
-      }
-  }
-  
-  /*resultados*/
-  let result="<div>La mejor nota es de: <span> "+mejorNotaAlumno+" ("+mejorNota+")</span></div>";
-  result+="<div>La peor nota es de: <span> "+peorNotaAlumnos+" ("+peorNota+")</span></div>";
-  result+="<div>Los aprobados son: <span> "+aprobados+"</span></div>";
-  result+="<div>Los reprobados son: <span> "+reprobados+"</span></div>";
-  result+="<div>El promedio de aprobados es: <span> "+(aprobados.length*100/alumnosAgregados.length)+"%</span></div>";
-  document.getElementById("calculos").innerHTML=result;
-  
-}  
+}
+
+/*para vaciar el carrito */
+vaciarcarr.addEventListener('click',()=>{
+  carrito.length = 0
+  verCarrito()
+  cargarstorage(carrito)
+})
+
