@@ -29,11 +29,16 @@ objetos.forEach((producto) => {
   /*para registrar el boton de añadir objeto al carrito */
   const boton = document.getElementById(`añadir${producto.id}`)
   boton.addEventListener('click', () => {
-    Swal.fire({
-      title: 'Añadiste el producto al carrito',
-      icon: 'success',
-      confirmButtonText: 'Okay'
-    })
+    Toastify({
+      text: "Objeto agregado al carrito",
+      duration: 2000,
+      gravity: 'bottom',
+      position: 'right',
+      style: {
+        background:'#111'
+      }
+
+    }).showToast();
     añadirProducto(producto.id)
        
   })
@@ -91,6 +96,16 @@ const elimcar = (prodId) =>{
   carrito.splice(indice, 1)
   verCarrito()
   cargarstorage(carrito)
+  Toastify({
+    text: "Objeto eliminado del carrito",
+    duration: 2000,
+    gravity: 'bottom',
+    position: 'right',
+    style: {
+      background:'#111'
+    }
+
+  }).showToast();
   
 }
 
