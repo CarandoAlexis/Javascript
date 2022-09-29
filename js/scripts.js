@@ -29,8 +29,13 @@ objetos.forEach((producto) => {
   /*para registrar el boton de añadir objeto al carrito */
   const boton = document.getElementById(`añadir${producto.id}`)
   boton.addEventListener('click', () => {
+    Swal.fire({
+      title: 'Añadiste el producto al carrito',
+      icon: 'success',
+      confirmButtonText: 'Okay'
+    })
     añadirProducto(producto.id)
-    
+       
   })
 
 })
@@ -91,8 +96,55 @@ const elimcar = (prodId) =>{
 
 /*para vaciar el carrito */
 vaciarcarr.addEventListener('click',()=>{
+  Swal.fire({
+      title: 'Está seguro de eliminar todo el carrito?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, seguro',
+      cancelButtonText: 'No, no quiero'
+  }).then((result) => {
   carrito.length = 0
   verCarrito()
   cargarstorage(carrito)
+  if (result.isConfirmed){
+    Swal.fire({
+    title: 'Has vaciado el carrito!',
+    icon: 'success',
+  })
+    carrito.length = 0
+    verCarrito()
+    cargarstorage(carrito)  
+    }
 })
 
+  
+})
+
+class Suscriptor{
+  constructor(nombre,correo){
+    this.nombre = nombre;
+    this.correo = correo;
+  }
+}
+/*boton para suscribirse a novedades*/
+const botonsus = document.getElementById('Suscribirse')
+botonsus.addEventListener("click",()=>{
+  aceptarSus()
+})
+
+function aceptarSus(){
+  let nombre = document.getElementById("nombre").value;
+  let correo = document.getElementById("mail").value;
+  let suscriptor1 = new Suscriptor(nombre, correo);
+  console.log(suscriptor1)
+  mostrarSuscripto(suscriptor1);
+}
+
+function mostrarSuscripto(suscriptor){
+  let formulario = document.getElementById("nuevosus");
+  formulario.innerHTML = "";
+  let nuevomensaje = document.createElement("div");
+  nuevomensaje.innerHTML = `<h3>Gracias ${suscriptor.nombre} en unos instantes recibiras las novedades</h3>`;
+  nuevomensaje.className = "info-sus";
+  formulario.appendChild(nuevomensaje)
+}
