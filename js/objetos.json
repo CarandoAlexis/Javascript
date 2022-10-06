@@ -1,0 +1,6 @@
+[
+    {"precio" : 100, "id" : 1, "producto": "Cortante y Marcador Lechuza", "numerodeprods" : 1},
+    {"precio": 800, "id": 2, "producto": "Muñeco de Sonic", "numerodeprods" : 1},
+    {"precio": 100, "id": 3, "producto": "Cortante de flores", "numerodeprods" : 1},
+    {"precio": 50, "id": 4, "producto": "Marcador de Arbol", "numerodeprods" : 1}
+]

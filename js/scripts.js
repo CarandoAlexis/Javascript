@@ -1,9 +1,4 @@
-let objetos = [
-    {precio : 100, id : 1, producto: "Cortante y Marcador Lechuza"},
-    {precio: 800, id: 2, producto: "Muñeco de Sonic"},
-    {precio: 100, id: 3, producto: "Cortante de flores"},
-    {precio: 50, id: 4, producto: "Marcador de Arbol"},
-]
+console.log(fetch('js/objetos.json'))
 const contenedorCarr = document.getElementById('carrito-contenedor')
 const vaciarcarr = document.getElementById('vaciarCarrito')
 const totalapagar = document.getElementById('total')
@@ -12,20 +7,24 @@ const totalapagar = document.getElementById('total')
 let carrito = []
 
 /*funcion para imprimir las cartas de productos en el html */
-const contenedorObj = document.getElementById('tarjetas')
-objetos.forEach((producto) => {
-  const div = document.createElement('div');
-  div.classList.add('card')
-  div.innerHTML=`
-    <div class="card-body">
-        <h5>${producto.producto}</h5>
-        <p>${producto.precio}</p>
-        <button class="btn btn-dark" id="añadir${producto.id}">Comprar</button>
-    </div>
-    `
 
-  contenedorObj.appendChild(div);
- 
+const contenedorObj = document.getElementById('tarjetas')
+fetch("js/objetos.json")
+.then (res=>res.json())
+.then ((objetos)=>{
+  objetos.forEach((producto) => {
+    const div = document.createElement('div');
+    div.classList.add('card')
+    div.innerHTML=`
+      <div class="card-body">
+          <h5>${producto.producto}</h5>
+          <p>${producto.precio}</p>
+          <button class="btn btn-dark" id="añadir${producto.id}">Comprar</button>
+      </div>
+      `
+  
+    contenedorObj.appendChild(div);
+
   /*para registrar el boton de añadir objeto al carrito */
   const boton = document.getElementById(`añadir${producto.id}`)
   boton.addEventListener('click', () => {
@@ -47,13 +46,29 @@ objetos.forEach((producto) => {
 
 /* funcion que agrega el objeto al carrito*/
 const añadirProducto = (prodId) => {
+  /*para agregar los productos repetidos en un solo elemento en cantidades y no en cascada uno por uno*/
+  /*
+  const acumular = carrito.some (prod => prod.id === prodId)
+  if(acumular){
+    const prod = carrito.map(prod =>{
+      if(prod.id === prodId){
+        prod.numerodeprods++
+      }
+    })
+  }else{
+    const item = objetos.find((prod) => prod.id === prodId)
+    carrito.push(item)
+  }
+  */
   const item = objetos.find((prod) => prod.id === prodId)
   carrito.push(item)
-  /*llamo la funcion asi puedo ver los objetos en carritos*/
+  /*llamo la funcion asi puedo ver los objetos en carrito*/
   verCarrito()
   cargarstorage(carrito)
   
 }
+    
+})
 
 /*funcion para visualizar cambios hechos en el carrito*/
 const verCarrito = () => {
@@ -64,18 +79,16 @@ const verCarrito = () => {
     div.className = ('productoCarr')
     div.innerHTML=`
     <p>${producto.producto}</p>
-    <p>${producto.precio}</p>
-    <button onClick="elimcar(${producto.id})" class="eliminarit btn-dark">Eliminar</button>
+    <p>Precio:$ ${producto.precio*producto.numerodeprods}</p>
+    <p>Cantidad de Productos: ${producto.numerodeprods}</p>
+    <button onClick="elimcar(${producto.numerodeprods})" class="eliminarit btn-dark">Eliminar</button>
     `
     contenedorCarr.appendChild(div);
-    
-
-    
-       
+   
   })
   
   /*sumo el total de la compra de cada objeto*/
-  totalapagar.innerText = carrito.reduce((acc, producto) => acc + producto.precio,0)
+  totalapagar.innerText = carrito.reduce((acc, producto) => acc + producto.precio * producto.numerodeprods ,0)
 }
 
 
@@ -118,7 +131,6 @@ vaciarcarr.addEventListener('click',()=>{
       confirmButtonText: 'Sí, seguro',
       cancelButtonText: 'No, no quiero'
   }).then((result) => {
-  carrito.length = 0
   verCarrito()
   cargarstorage(carrito)
   if (result.isConfirmed){
