@@ -9,6 +9,7 @@ let carrito = []
 /*funcion para imprimir las cartas de productos en el html */
 
 const contenedorObj = document.getElementById('tarjetas')
+/*cargo los productos desde un json*/
 fetch("js/objetos.json")
 .then (res=>res.json())
 .then ((objetos)=>{
@@ -47,7 +48,6 @@ fetch("js/objetos.json")
 /* funcion que agrega el objeto al carrito*/
 const añadirProducto = (prodId) => {
   /*para agregar los productos repetidos en un solo elemento en cantidades y no en cascada uno por uno*/
-  /*
   const acumular = carrito.some (prod => prod.id === prodId)
   if(acumular){
     const prod = carrito.map(prod =>{
@@ -59,9 +59,7 @@ const añadirProducto = (prodId) => {
     const item = objetos.find((prod) => prod.id === prodId)
     carrito.push(item)
   }
-  */
-  const item = objetos.find((prod) => prod.id === prodId)
-  carrito.push(item)
+ 
   /*llamo la funcion asi puedo ver los objetos en carrito*/
   verCarrito()
   cargarstorage(carrito)
@@ -80,7 +78,12 @@ const verCarrito = () => {
     div.innerHTML=`
     <p>${producto.producto}</p>
     <p>Precio:$ ${producto.precio*producto.numerodeprods}</p>
-    <p>Cantidad de Productos: ${producto.numerodeprods}</p>
+    <p class="units">
+                <p class="btn minus" onclick="cambiarnumerodeprods('minus', ${producto.id})">-</p>
+                <p class="number">${producto.numerodeprods}</p>
+                <p class="btn plus" onclick="cambiarnumerodeprods('plus', ${producto.id})">+</p>           
+    </p>
+    
     <button onClick="elimcar(${producto.numerodeprods})" class="eliminarit btn-dark">Eliminar</button>
     `
     contenedorCarr.appendChild(div);
@@ -146,6 +149,27 @@ vaciarcarr.addEventListener('click',()=>{
 
   
 })
+/*para cambiar cantidad de productos con botones -+*/
+function cambiarnumerodeprods(action, id) {
+  carrito = carrito.map((prod) => {
+    let numerodeprods = prod.numerodeprods;
+    if (prod.id === id) {
+      if (action === "minus" && numerodeprods > 1) {
+        numerodeprods--;
+      } else if (action === "plus" && prod.numerodeprods > 0) {
+        numerodeprods++;
+      }
+    }
+
+    return {
+      ...prod,
+      numerodeprods,
+    };
+  });
+
+  verCarrito();
+  cargarstorage(carrito)
+}
 
 class Suscriptor{
   constructor(nombre,correo){
